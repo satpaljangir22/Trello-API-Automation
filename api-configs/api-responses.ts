@@ -3,14 +3,16 @@ interface Support {
   text: string;
 }
 
+interface Data {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  avatar: string;
+}
+
 interface User {
-  data: {
-    id: number;
-    email: string;
-    first_name: string;
-    last_name: string;
-    avatar: string;
-  };
+  data: Data;
   support: Support;
 }
 
@@ -21,7 +23,15 @@ interface NewUser {
   createdAt: string;
 }
 
-interface Data {
+interface AllUsers {
+  page: number;
+  per_page: number;
+  total: number;
+  total_pages: number;
+  data: Data[];
+}
+
+interface ResourceData {
   id: number;
   name: string;
   year: number;
@@ -30,7 +40,7 @@ interface Data {
 }
 
 interface SingleResource {
-  data: Data;
+  data: ResourceData;
   support: Support;
 }
 
@@ -39,8 +49,8 @@ interface AllResources {
   per_page: number;
   total: number;
   total_page: number;
-  data: Data[];
+  data: ResourceData[];
   support: Support;
 }
 
-export { User, NewUser, AllResources, SingleResource };
+export { User, NewUser, AllUsers, AllResources, SingleResource };
