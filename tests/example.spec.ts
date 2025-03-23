@@ -1,6 +1,11 @@
 import { test, expect } from "../api-fixtures/api-client-fixture";
 import { endpoints } from "../api-fixtures/endpoints";
-import { User, NewUser } from "../api-fixtures/response-interfaces";
+import {
+  User,
+  NewUser,
+  AllResources,
+  SingleResource,
+} from "../api-fixtures/response-interfaces";
 
 test("create a new user", async ({ apiClient }) => {
   const user_details = { name: "Satpal", job: "QA" };
@@ -29,4 +34,19 @@ test("single user not found", async ({ apiClient }) => {
   expect(response.status()).toBe(404);
   const body = await response.json();
   expect(body).toEqual({});
+});
+
+test("get list of all resources", async ({ apiClient }) => {
+  const response = await apiClient.get(endpoints.listResources());
+  expect(response.ok()).toBeTruthy();
+  const allResources: AllResources = await response.json();
+  expect(allResources.data).toHaveLength(6);
+});
+
+test("get a single resources", async ({ apiClient }) => {
+  const resources_id = 2;
+  const response = await apiClient.get(endpoints.singleResource(resources_id));
+  expect(response.ok()).toBeTruthy();
+  const singleResource: SingleResource = await response.json();
+  expect(singleResource.data.id).toBe(resources_id);
 });

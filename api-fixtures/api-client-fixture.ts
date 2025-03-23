@@ -18,10 +18,7 @@ type RequestBody = string | Buffer | object;
 type APIRequestFixture = {
   apiClient: {
     get: (endpoint: string, queryParams?: QueryParams) => Promise<APIResponse>;
-    post: (
-      endpoint: string,
-      body?: string | Buffer | object
-    ) => Promise<APIResponse>;
+    post: (endpoint: string, body?: RequestBody) => Promise<APIResponse>;
   };
 };
 
