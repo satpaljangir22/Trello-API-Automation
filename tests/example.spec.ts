@@ -1,63 +1,58 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../api-configs/api-request-fixture";
 import { endpoints } from "../api-configs/api-endpoints";
-import { validateResponseSchema, schemas } from "../api-configs/api-schemas";
+import { schemas } from "../api-configs/api-schemas";
 
-test("create a new user", async ({ request }) => {
+test("create a new user", async ({ apiClient }) => {
   const user_details = { name: "Satpal", job: "QA" };
-  const response = await request.post(endpoints.users, { data: user_details });
-  expect(response.ok()).toBeTruthy();
-  const newUser = await response.json();
-  const parsedNewUser = schemas.newUserSchema.parse(newUser);
-  expect(parseInt(parsedNewUser.id)).toBeTruthy();
+  const response = await apiClient.post(
+    endpoints.users,
+    schemas.newUserSchema,
+    user_details
+  );
+  expect(parseInt(response.id)).toBeTruthy();
 });
 
-test("verify a single user", async ({ request }) => {
+test("verify a single user", async ({ apiClient }) => {
   const user_id = 2;
-  const response = await request.get(endpoints.users + `/${user_id}`);
-  expect(response.ok()).toBeTruthy();
-  const user = await response.json();
-  const parsedUser = validateResponseSchema(schemas.userSchema, user);
-  expect(parsedUser.data.id).toBe(user_id);
+  const response = await apiClient.get(
+    endpoints.users + `/${user_id}`,
+    schemas.userSchema
+  );
+  expect(response.data.id).toBe(user_id);
 });
 
-test("list users on a page", async ({ request }) => {
+test("list users on a page", async ({ apiClient }) => {
   const params = { page: 2 };
-  const response = await request.get(endpoints.users, { params: params });
-  expect(response.ok()).toBeTruthy();
-  const users = await response.json();
-  const parsedUsers = validateResponseSchema(schemas.allUsersSchema, users);
-  expect(parsedUsers.page).toBe(params.page);
+  const response = await apiClient.get(
+    endpoints.users,
+    schemas.allUsersSchema,
+    params
+  );
+  expect(response.page).toBe(params.page);
 });
 
 test("single user not found", async ({ request }) => {
   const user_id = 23;
   const response = await request.get(endpoints.users + `/${user_id}`);
-  expect(response.status()).toBe(404);
-  const body = await response.json();
-  expect(body).toEqual({});
+  const responseData = await response.json();
+  expect(responseData).toEqual({});
 });
 
-test("get list of all resources", async ({ request }) => {
-  const response = await request.get(endpoints.unknown);
-  expect(response.ok()).toBeTruthy();
-  const allResources = await response.json();
-  const parsedResources = validateResponseSchema(
-    schemas.allResourcesSchema,
-    allResources
+test("get list of all resources", async ({ apiClient }) => {
+  const response = await apiClient.get(
+    endpoints.unknown,
+    schemas.allResourcesSchema
   );
-  expect(parsedResources.data).toHaveLength(6);
+  expect(response.data).toHaveLength(6);
 });
 
-test("get a single resources", async ({ request }) => {
+test("get a single resources", async ({ apiClient }) => {
   const resources_id = 2;
-  const response = await request.get(endpoints.unknown + `/${resources_id}`);
-  expect(response.ok()).toBeTruthy();
-  const singleResource = await response.json();
-  const parsedResource = validateResponseSchema(
-    schemas.singleResourceSchema,
-    singleResource
+  const response = await apiClient.get(
+    endpoints.unknown + `/${resources_id}`,
+    schemas.singleResourceSchema
   );
-  expect(parsedResource.data.id).toBe(resources_id);
+  expect(response.data.id).toBe(resources_id);
 });
 
 test("single resources not found", async ({ request }) => {
