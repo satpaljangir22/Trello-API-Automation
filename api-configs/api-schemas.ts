@@ -55,15 +55,6 @@ const AllResources = z.object({
   support: Support,
 });
 
-function validateResponseSchema<T>(schema: z.ZodType<T>, response: unknown): T {
-  try {
-    const parsedResponse = schema.parse(response);
-    return parsedResponse;
-  } catch (error) {
-    throw error;
-  }
-}
-
 const schemas = {
   newUserSchema: NewUser,
   userSchema: User,
@@ -72,4 +63,4 @@ const schemas = {
   allResourcesSchema: AllResources,
 };
 
-export { schemas, validateResponseSchema };
+export { schemas };
