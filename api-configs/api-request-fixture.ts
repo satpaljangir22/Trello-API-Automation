@@ -4,7 +4,11 @@ import {
   APIRequestContext,
   expect,
 } from "@playwright/test";
-import { ZodType } from "zod";
+import { ZodType, ZodError } from "zod";
+import {
+  schemaValidatedResponse,
+  handleApiError,
+} from "../api-utility/utility";
 
 type QueryParams =
   | {
@@ -15,19 +19,25 @@ type QueryParams =
 
 type RequestBody = string | Buffer | object;
 
+//Type alias for API Client Fixture
 type APIRequestFixture = {
   apiClient: {
     get: <T>(
       endpoint: string,
-      schema?: ZodType<T>,
+      schema: ZodType<T>,
       queryParams?: QueryParams
     ) => Promise<T>;
     post: <T>(
       endpoint: string,
-      schema?: ZodType<T>,
-      body?: string | Buffer | object
+      schema: ZodType<T>,
+      body?: RequestBody
     ) => Promise<T>;
   };
+  put: <T>(
+    endpoint: string,
+    schema: ZodType<T>,
+    body?: RequestBody
+  ) => Promise<T>;
 };
 
 const test = base.extend<APIRequestFixture>({
@@ -35,41 +45,34 @@ const test = base.extend<APIRequestFixture>({
     const requestContext: APIRequestContext = await request.newContext({
       baseURL: "https://reqres.in",
     });
+
     const apiClient = {
       async get<T>(
         endpoint: string,
-        schema?: ZodType<T>,
+        schema: ZodType<T>,
         queryParams?: QueryParams
       ): Promise<T> {
+        console.log(`GET Request to ${endpoint}`);
         const apiResponse = await requestContext.get(endpoint, {
           params: queryParams,
         });
-        if (!apiResponse.ok()) {
-          throw new Error(`Request failed with status ${apiResponse.status()}`);
-        }
+        handleApiError(apiResponse);
         const responseData = await apiResponse.json();
-        try {
-          return schema?.parse(responseData) as T;
-        } catch (error) {
-          throw new Error(`Schema validation faild with error ${error}`);
-        }
+        console.log(`Response from ${endpoint}: `, responseData);
+        return schemaValidatedResponse(schema, responseData);
       },
 
       async post<T>(
         endpoint: string,
-        schema?: ZodType<T>,
+        schema: ZodType<T>,
         body?: RequestBody
       ): Promise<T> {
+        console.log(`POST Request to ${endpoint}`);
         const apiResponse = await requestContext.post(endpoint, { data: body });
-        if (!apiResponse.ok()) {
-          throw new Error(`Request failed with status ${apiResponse.status()}`);
-        }
+        handleApiError(apiResponse);
         const responseData = await apiResponse.json();
-        try {
-          return schema?.parse(responseData) as T;
-        } catch (error) {
-          throw new Error(`Schema validation faild with error ${error}`);
-        }
+        console.log(`Response from ${endpoint}: `, responseData);
+        return schemaValidatedResponse(schema, responseData);
       },
     };
     await use(apiClient);
