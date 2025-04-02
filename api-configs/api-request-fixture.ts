@@ -56,7 +56,7 @@ const test = base.extend<APIRequestFixture>({
         const apiResponse = await requestContext.get(endpoint, {
           params: queryParams,
         });
-        handleApiError(apiResponse);
+        await handleApiError(apiResponse);
         const responseData = await apiResponse.json();
         console.log(`Response from ${endpoint}: `, responseData);
         return schemaValidatedResponse(schema, responseData);
@@ -69,7 +69,7 @@ const test = base.extend<APIRequestFixture>({
       ): Promise<T> {
         console.log(`POST Request to ${endpoint}`);
         const apiResponse = await requestContext.post(endpoint, { data: body });
-        handleApiError(apiResponse);
+        await handleApiError(apiResponse);
         const responseData = await apiResponse.json();
         console.log(`Response from ${endpoint}: `, responseData);
         return schemaValidatedResponse(schema, responseData);

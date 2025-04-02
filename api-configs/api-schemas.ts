@@ -1,18 +1,21 @@
 import { z } from "zod";
 
-const NewUser = z.object({
+// Schema for creating a new user
+const NewUserSchema = z.object({
   name: z.string(),
   job: z.string(),
   id: z.string(),
   createdAt: z.string(),
 });
 
-const Support = z.object({
+// Schema for support information
+const SupportSchema = z.object({
   url: z.string(),
   text: z.string(),
 });
 
-const Data = z.object({
+// Schema for user data
+const DataSchema = z.object({
   id: z.number(),
   email: z.string(),
   first_name: z.string(),
@@ -20,20 +23,27 @@ const Data = z.object({
   avatar: z.string(),
 });
 
-const User = z.object({
-  data: Data,
-  support: Support,
+// Schema for a single user
+const UserSchema = z.object({
+  data: DataSchema,
+  support: SupportSchema,
 });
 
-const AllUsers = z.object({
+// Common schema for pagination metadata
+const PaginationSchema = z.object({
   page: z.number(),
   per_page: z.number(),
   total: z.number(),
   total_pages: z.number(),
-  data: z.array(Data),
 });
 
-const ResourceData = z.object({
+// Schema for all users
+const AllUsersSchema = PaginationSchema.extend({
+  data: z.array(DataSchema),
+});
+
+// Schema for resource data
+const ResourceDataSchema = z.object({
   id: z.number(),
   name: z.string(),
   year: z.number(),
@@ -41,26 +51,39 @@ const ResourceData = z.object({
   pantone_value: z.string(),
 });
 
-const SingleResource = z.object({
-  data: ResourceData,
-  support: Support,
+// Schema for a single resource
+const SingleResourceSchema = z.object({
+  data: ResourceDataSchema,
+  support: SupportSchema,
 });
 
-const AllResources = z.object({
-  page: z.number(),
-  per_page: z.number(),
-  total: z.number(),
-  total_pages: z.number(),
-  data: z.array(ResourceData),
-  support: Support,
+// Schema for all resources
+const AllResourcesSchema = PaginationSchema.extend({
+  data: z.array(ResourceDataSchema),
+  support: SupportSchema,
 });
 
-const schemas = {
-  newUserSchema: NewUser,
-  userSchema: User,
-  allUsersSchema: AllUsers,
-  singleResourceSchema: SingleResource,
-  allResourcesSchema: AllResources,
+// Export schemas as an object
+export const schemas = {
+  NewUserSchema,
+  UserSchema,
+  AllUsersSchema,
+  SingleResourceSchema,
+  AllResourcesSchema,
 };
 
-export { schemas };
+// Export individual schemas for flexibility
+export {
+  NewUserSchema,
+  UserSchema,
+  AllUsersSchema,
+  SingleResourceSchema,
+  AllResourcesSchema,
+};
+
+// Export inferred types
+export type NewUser = z.infer<typeof NewUserSchema>;
+export type User = z.infer<typeof UserSchema>;
+export type AllUsers = z.infer<typeof AllUsersSchema>;
+export type SingleResource = z.infer<typeof SingleResourceSchema>;
+export type AllResources = z.infer<typeof AllResourcesSchema>;

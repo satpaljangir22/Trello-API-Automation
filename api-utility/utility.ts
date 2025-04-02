@@ -18,9 +18,17 @@ const schemaValidatedResponse = function <T>(
   }
 };
 
-const handleApiError = function (apiResponse: APIResponse): void {
+const handleApiError = async function (
+  apiResponse: APIResponse
+): Promise<void> {
   if (!apiResponse.ok()) {
-    throw new Error(`Request failed with status ${apiResponse.status()}`);
+    const responseBody = await apiResponse.text();
+    console.error(
+      `API Error: ${apiResponse.status()} - ${apiResponse.statusText()}\nResponse Body: ${responseBody}`
+    );
+    throw new Error(
+      `Request failed with status ${apiResponse.status()} - ${apiResponse.statusText()}`
+    );
   }
 };
 

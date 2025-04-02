@@ -6,7 +6,7 @@ test("create a new user", async ({ apiClient }) => {
   const user_details = { name: "Satpal", job: "QA" };
   const response = await apiClient.post(
     endpoints.users,
-    schemas.newUserSchema,
+    schemas.NewUserSchema,
     user_details
   );
   expect(parseInt(response.id)).toBeTruthy();
@@ -16,7 +16,7 @@ test("verify a single user", async ({ apiClient }) => {
   const user_id = 2;
   const response = await apiClient.get(
     endpoints.users + `/${user_id}`,
-    schemas.userSchema
+    schemas.UserSchema
   );
   expect(response.data.id).toBe(user_id);
 });
@@ -25,7 +25,7 @@ test("list users on a page", async ({ apiClient }) => {
   const params = { page: 2 };
   const response = await apiClient.get(
     endpoints.users,
-    schemas.allUsersSchema,
+    schemas.AllUsersSchema,
     params
   );
   expect(response.page).toBe(params.page);
@@ -41,7 +41,7 @@ test("single user not found", async ({ request }) => {
 test("get list of all resources", async ({ apiClient }) => {
   const response = await apiClient.get(
     endpoints.unknown,
-    schemas.allResourcesSchema
+    schemas.AllResourcesSchema
   );
   expect(response.data).toHaveLength(6);
 });
@@ -50,7 +50,7 @@ test("get a single resources", async ({ apiClient }) => {
   const resources_id = 2;
   const response = await apiClient.get(
     endpoints.unknown + `/${resources_id}`,
-    schemas.singleResourceSchema
+    schemas.SingleResourceSchema
   );
   expect(response.data.id).toBe(resources_id);
 });
