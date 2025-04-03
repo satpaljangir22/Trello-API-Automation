@@ -58,7 +58,10 @@ const test = base.extend<APIRequestFixture>({
         });
         await handleApiError(apiResponse);
         const responseData = await apiResponse.json();
-        console.log(`Response from ${endpoint}: `, responseData);
+        console.log(
+          `Response from ${endpoint}: `,
+          JSON.stringify(responseData)
+        );
         return schemaValidatedResponse(schema, responseData);
       },
 
@@ -71,7 +74,10 @@ const test = base.extend<APIRequestFixture>({
         const apiResponse = await requestContext.post(endpoint, { data: body });
         await handleApiError(apiResponse);
         const responseData = await apiResponse.json();
-        console.log(`Response from ${endpoint}: `, responseData);
+        console.log(
+          `Response from ${endpoint}: `,
+          JSON.stringify(responseData)
+        );
         return schemaValidatedResponse(schema, responseData);
       },
     };
