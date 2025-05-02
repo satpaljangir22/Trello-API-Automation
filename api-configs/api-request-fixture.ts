@@ -55,6 +55,9 @@ const test = base.extend<APIRequestFixture>({
         console.log(`GET Request to ${endpoint}`);
         const apiResponse = await requestContext.get(endpoint, {
           params: queryParams,
+          headers: {
+            "x-api-key": "reqres-free-v1",
+          },
         });
         await handleApiError(apiResponse);
         const responseData = await apiResponse.json();
@@ -71,7 +74,12 @@ const test = base.extend<APIRequestFixture>({
         body?: RequestBody
       ): Promise<T> {
         console.log(`POST Request to ${endpoint}`);
-        const apiResponse = await requestContext.post(endpoint, { data: body });
+        const apiResponse = await requestContext.post(endpoint, {
+          data: body,
+          headers: {
+            "x-api-key": "reqres-free-v1",
+          },
+        });
         await handleApiError(apiResponse);
         const responseData = await apiResponse.json();
         console.log(

@@ -35,7 +35,11 @@ test("should return empty object for a non-existing user", async ({
   request,
 }) => {
   const user_id = 23;
-  const response = await request.get(endpoints.users + `/${user_id}`);
+  const response = await request.get(endpoints.users + `/${user_id}`, {
+    headers: {
+      "x-api-key": "reqres-free-v1",
+    },
+  });
   const responseData = await response.json();
   expect(responseData).toEqual({});
 });
@@ -62,7 +66,12 @@ test("should return empty object for non-existing resource", async ({
 }) => {
   const nonExistingResource = 23;
   const response = await request.get(
-    endpoints.unknown + `/${nonExistingResource}`
+    endpoints.unknown + `/${nonExistingResource}`,
+    {
+      headers: {
+        "x-api-key": "reqres-free-v1",
+      },
+    }
   );
   expect(response.status()).toBe(404);
   const body = await response.json();
@@ -77,6 +86,9 @@ test("should update details of a user", async ({ request }) => {
   };
   const response = await request.put(`${endpoints.users}/${user_id}`, {
     data: user,
+    headers: {
+      "x-api-key": "reqres-free-v1",
+    },
   });
   expect(response.ok()).toBeTruthy();
   const body: { name: string; job: string; updatedAt: string } =
